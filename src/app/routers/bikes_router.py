@@ -12,11 +12,11 @@ def get_bike_datasource(db: AsyncSession = Depends(get_db)) -> BikesDataSource:
     return BikesDataSource(db)
 
 @router.get("/", response_model=List[BikeResponse])
-def read_bikes(
+async def read_bikes(
     status: Optional[Literal['available', 'rented', 'maintenance']] = Query(None, description="Bike status to filter"),
     datasource: BikesDataSource = Depends(get_bike_datasource),
 ):
-    all_bikes = datasource.get_all_bikes()
+    all_bikes = await datasource.get_all_bikes()
     if status:
         return [bike for bike in all_bikes if bike.get("status") == status]
     return all_bikes
